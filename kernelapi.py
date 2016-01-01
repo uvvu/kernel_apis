@@ -45,6 +45,18 @@ def makeFileList():
     return fileList
 
 
+def refineApis(apiList):
+    apiName = []
+    for i in range(0, len(apiList)):
+        api = (apiList[i].split(' ')[-1]).split('(')[0]
+        api = api.replace("*", "")
+        apiName.append(api)
+
+    apiName = list(set(apiName))
+
+    return apiName
+
+
 def main():
     declare = filterSet()
     fileList = makeFileList()
@@ -52,12 +64,12 @@ def main():
     for file in fileList:
         codeList = open(file, 'r').readlines()
         apiList = findApi(codeList)
+        apiName = refineApis(apiList)
         out = open('output.txt', 'a')
-        for api in apiList:
+        for api in apiName:
             out.write("%s\n" % api)
         out.close()
 
 
 if __name__ == '__main__':
     main()
-
