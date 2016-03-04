@@ -7,16 +7,10 @@
 __version__ = '0.1.0.0a0'
 
 import sys
-import os
-import git
-import re
-import MySQLdb
-import sys
-import itertools
-import time
 
 from modParsing.parsing import KernelParsing
-from gitAnalysis.humanfactor import commentAnalyzer
+from modGitAnalysis.humanfactor import CommentAnalyzer
+from modConSQL.connsql import PythonSQL
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -29,9 +23,19 @@ class Usage(Exception):
 
 def main(argv=None):
     parser = KernelParsing()
+    cmmtAnalyze = CommentAnalyzer()
 
+    # Analizing Methods
+    cmmtAnalyze.extractChangeID()
+    cmmtAnalyze.extractDiffCode()
+    for x in cmmtAnalyze.addedCode:
+        print "-------------------------------------------------------------------------------"
+        print x
+
+    # API Extraction Module
     fileList = parser.makeFileList()
     for file in fileList:
+        #print "Analyzing", file, "..."
         codeList = open(file, 'r').readlines()
         apiList = parser.findApi(codeList)
         apiName = parser.refineApis(apiList)
